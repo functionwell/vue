@@ -267,6 +267,7 @@ const defaultStrat = function (parentVal: any, childVal: any): any {
     : childVal
 }
 
+// 判断options中components中各个组件名称是否合规
 /**
  * Validate component names
  */
@@ -276,14 +277,16 @@ function checkComponents (options: Object) {
   }
 }
 
+// 判断Component名称是否合规
 export function validateComponentName (name: string) {
+  // ^[a-zA-Z][\-\.0-9_a-zA-Z\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C-\u200D\u203F-\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]*$
   if (!new RegExp(`^[a-zA-Z][\\-\\.0-9_${unicodeRegExp.source}]*$`).test(name)) {
     warn(
       'Invalid component name: "' + name + '". Component names ' +
       'should conform to valid custom element name in html5 specification.'
     )
   }
-  if (isBuiltInTag(name) || config.isReservedTag(name)) {
+  if (isBuiltInTag(name) || config.isReservedTag(name)) { // 内置标签或保留标签
     warn(
       'Do not use built-in or reserved HTML elements as component ' +
       'id: ' + name
@@ -291,6 +294,7 @@ export function validateComponentName (name: string) {
   }
 }
 
+// 规范化options.props
 /**
  * Ensure all props option syntax are normalized into the
  * Object-based format.
@@ -300,12 +304,12 @@ function normalizeProps (options: Object, vm: ?Component) {
   if (!props) return
   const res = {}
   let i, val, name
-  if (Array.isArray(props)) {
+  if (Array.isArray(props)) { // 以数组形式传递props，最终组装为{ propName: { type: null } }
     i = props.length
     while (i--) {
       val = props[i]
       if (typeof val === 'string') {
-        name = camelize(val)
+        name = camelize(val) // 横线连接改为驼峰 foo-bar => fooBar
         res[name] = { type: null }
       } else if (process.env.NODE_ENV !== 'production') {
         warn('props must be strings when using array syntax.')
@@ -329,13 +333,14 @@ function normalizeProps (options: Object, vm: ?Component) {
   options.props = res
 }
 
+// 规范化options.inject
 /**
  * Normalize all injections into Object-based format
  */
 function normalizeInject (options: Object, vm: ?Component) {
   const inject = options.inject
   if (!inject) return
-  const normalized = options.inject = {}
+  const normalized = options.inject = {} // 把options.inject重置为{}，最终{ localKey: { from: provideObjKey } }
   if (Array.isArray(inject)) {
     for (let i = 0; i < inject.length; i++) {
       normalized[inject[i]] = { from: inject[i] }
@@ -356,10 +361,11 @@ function normalizeInject (options: Object, vm: ?Component) {
   }
 }
 
+// 规范化指令
 /**
  * Normalize raw function directives into object format.
  */
-function normalizeDirectives (options: Object) {
+function normalizeDirectives (options: Object) { // 将options.directives规范化为{ bind?, inserted?, update?, componentUpdated?, unbind? }, 如果未指定钩子，则为{ bind: function, update: function }
   const dirs = options.directives
   if (dirs) {
     for (const key in dirs) {
@@ -381,6 +387,7 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
   }
 }
 
+// 合并options，使用于vm._init
 /**
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
@@ -427,7 +434,7 @@ export function mergeOptions (
       mergeField(key)
     }
   }
-  function mergeField (key) {
+  function mergeField (key) { // 应用config里的合并策略
     const strat = strats[key] || defaultStrat
     options[key] = strat(parent[key], child[key], vm, key)
   }

@@ -33,7 +33,7 @@ function createOnceHandler (event, fn) {
   const _target = target
   return function onceHandler () {
     const res = fn.apply(null, arguments)
-    if (res !== null) {
+    if (res !== null) { // fn调用的结果不为null的话，解绑handler
       _target.$off(event, onceHandler)
     }
   }

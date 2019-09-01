@@ -13,11 +13,12 @@ import { extend, mergeOptions, formatComponentName } from '../util/index'
 let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
-  Vue.prototype._init = function (options?: Object) {
+  Vue.prototype._init = function (options?: Object) { // vm._init
     const vm: Component = this
     // a uid
     vm._uid = uid++
 
+    // 记录performance
     let startTag, endTag
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -29,7 +30,7 @@ export function initMixin (Vue: Class<Component>) {
     // a flag to avoid this being observed
     vm._isVue = true
     // merge options
-    if (options && options._isComponent) {
+    if (options && options._isComponent) { // _isComponent选项什么情况下是truthy？
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
@@ -43,15 +44,15 @@ export function initMixin (Vue: Class<Component>) {
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
-      initProxy(vm)
+      initProxy(vm) // vm._renderProxy -> new Proxy(vm, handlers) // handlers: getHandler | hasHandler
     } else {
       vm._renderProxy = vm
     }
     // expose real self
     vm._self = vm
-    initLifecycle(vm)
-    initEvents(vm)
-    initRender(vm)
+    initLifecycle(vm) // 初始化一些生命周期指示变量，$parent, $root, $children, $refs,_watcher,_inactive,_directInactive,_isMounted,_isDestroyed,_isBeingDestroyed
+    initEvents(vm) // 初始化vm._events
+    initRender(vm) // 初始化render相关，vm._vnode,vm._staticTrees,vm.$slots,vm.$scopedSlots,将$attrs，$listeners申明为响应式
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props
     initState(vm)
@@ -71,6 +72,7 @@ export function initMixin (Vue: Class<Component>) {
   }
 }
 
+// 组装options，最终提现为vm.$options
 export function initInternalComponent (vm: Component, options: InternalComponentOptions) {
   const opts = vm.$options = Object.create(vm.constructor.options)
   // doing this because it's faster than dynamic enumeration.
@@ -100,7 +102,7 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
       // need to resolve new options.
       Ctor.superOptions = superOptions
       // check if there are any late-modified/attached options (#4976)
-      const modifiedOptions = resolveModifiedOptions(Ctor)
+      const modifiedOptions =  resolveModifiedOptions(Ctor)
       // update base extend options
       if (modifiedOptions) {
         extend(Ctor.extendOptions, modifiedOptions)

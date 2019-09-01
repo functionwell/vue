@@ -51,6 +51,7 @@ export function toRawType (value: any): string {
   return _toString.call(value).slice(8, -1)
 }
 
+// 判断对象为普通对象Object.prototype.toString.call(obj) === '[object Object]'
 /**
  * Strict object type check. Only returns true
  * for plain JavaScript objects.
@@ -117,11 +118,15 @@ export function makeMap (
     : val => map[val]
 }
 
+// isBuiltInTag: (key: string) => true | void
+// map: [slot, component]
 /**
  * Check if a tag is a built-in tag.
  */
 export const isBuiltInTag = makeMap('slot,component', true)
 
+// isReservedAttribute: (key: string) => true | void
+// map: [key, ref, slot, slot-scope, is]
 /**
  * Check if an attribute is a reserved attribute.
  */
@@ -163,6 +168,7 @@ export function cached<F: Function> (fn: F): F {
  */
 const camelizeRE = /-(\w)/g
 export const camelize = cached((str: string): string => {
+  // function (replacement) : (match, p1, p2, offset, string) => string
   return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : '')
 })
 
