@@ -92,7 +92,7 @@ export default class Watcher {
     }
     this.value = this.lazy
       ? undefined
-      : this.get()
+      : this.get() // 创建Watcher完成后直接调一次get()
   }
 
   /**

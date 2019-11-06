@@ -28,6 +28,12 @@ export function toggleObserving (value: boolean) {
   shouldObserve = value
 }
 
+
+/**
+ * Observer类是附加到每个被观察对象的类。 
+ * 附加后，观察者将目标对象的属性键转换为收集依赖项
+ * 并调度更新的getter / setter。
+*/
 /**
  * Observer class that is attached to each observed
  * object. Once attached, the observer converts the target
@@ -43,7 +49,7 @@ export class Observer {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
-    def(value, '__ob__', this)
+    def(value, '__ob__', this) // 在被观察的对象上记录观察者实例，为不可枚举属性
     if (Array.isArray(value)) {
       if (hasProto) {
         protoAugment(value, arrayMethods)
@@ -56,6 +62,9 @@ export class Observer {
     }
   }
 
+  /**
+   * 将所有属性转换为getter/setters
+  */
   /**
    * Walk through all properties and convert them into
    * getter/setters. This method should only be called when
@@ -103,6 +112,10 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
 }
 
 /**
+ * 尝试为某个值创建一个观察者实例，如果成功观察到该观察者，
+ * 则返回新的观察者，如果该值已有一个观察者，则返回现有的观察者。
+ * */
+/**
  * Attempt to create an observer instance for a value,
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
@@ -124,12 +137,12 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     ob = new Observer(value)
   }
   if (asRootData && ob) {
-    ob.vmCount++
+    ob.vmCount++ // 如果是rootData的话，记录vmCount
   }
   return ob
 }
 
-// 响应式属性
+// 定义响应式属性
 /**
  * Define a reactive property on an Object.
  */
@@ -160,7 +173,7 @@ export function defineReactive (
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
-      if (Dep.target) {
+      if (Dep.target) { // 什么时候push Target？
         dep.depend()
         if (childOb) {
           childOb.dep.depend()

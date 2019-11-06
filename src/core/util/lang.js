@@ -36,10 +36,10 @@ export function parsePath (path: string): any {
     return
   }
   const segments = path.split('.')
-  return function (obj) {
+  return function (obj) { // 返回可以在segments中查找obj的函数
     for (let i = 0; i < segments.length; i++) {
       if (!obj) return
-      obj = obj[segments[i]]
+      obj = obj[segments[i]] // 会调用state.js中的proxy()函数，why？
     }
     return obj
   }

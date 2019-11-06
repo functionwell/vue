@@ -31,7 +31,7 @@ export default class Dep {
 
   depend () {
     if (Dep.target) {
-      Dep.target.addDep(this)
+      Dep.target.addDep(this) // 调用watcher.addDep把watcher推到dep的subs里
     }
   }
 

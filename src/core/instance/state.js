@@ -35,6 +35,9 @@ const sharedPropertyDefinition = {
   set: noop
 }
 
+/**
+ * 代理，
+*/
 export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.get = function proxyGetter () {
     return this[sourceKey][key]
@@ -109,6 +112,7 @@ function initProps (vm: Component, propsOptions: Object) {
   toggleObserving(true)
 }
 
+// 初始化data()
 function initData (vm: Component) {
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
@@ -127,7 +131,7 @@ function initData (vm: Component) {
   const props = vm.$options.props
   const methods = vm.$options.methods
   let i = keys.length
-  while (i--) {
+  while (i--) { // 检查是否和props、methods重复
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {
       if (methods && hasOwn(methods, key)) {
@@ -147,13 +151,15 @@ function initData (vm: Component) {
       proxy(vm, `_data`, key)
     }
   }
+  // 观察data
   // observe data
   observe(data, true /* asRootData */)
 }
 
+// data是函数时，获取data()的结果
 export function getData (data: Function, vm: Component): any {
   // #7573 disable dep collection when invoking data getters
-  pushTarget()
+  pushTarget() // 调用data getters时，不收集依赖
   try {
     return data.call(vm, vm)
   } catch (e) {
@@ -259,6 +265,7 @@ function createGetterInvoker(fn) {
   }
 }
 
+// 初始化vm methods
 function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
   for (const key in methods) {
@@ -276,7 +283,7 @@ function initMethods (vm: Component, methods: Object) {
           vm
         )
       }
-      if ((key in vm) && isReserved(key)) {
+      if ((key in vm) && isReserved(key)) { // 保留方法名
         warn(
           `Method "${key}" conflicts with an existing Vue instance method. ` +
           `Avoid defining component methods that start with _ or $.`
@@ -287,9 +294,12 @@ function initMethods (vm: Component, methods: Object) {
   }
 }
 
+/**
+ * 初始化vm.watch
+*/
 function initWatch (vm: Component, watch: Object) {
   for (const key in watch) {
-    const handler = watch[key]
+    const handler = watch[key] // handler => vm[handler]
     if (Array.isArray(handler)) {
       for (let i = 0; i < handler.length; i++) {
         createWatcher(vm, key, handler[i])
@@ -342,9 +352,10 @@ export function stateMixin (Vue: Class<Component>) {
   Vue.prototype.$set = set
   Vue.prototype.$delete = del
 
+  // $watch(): 创建 Watcher 实例
   Vue.prototype.$watch = function (
     expOrFn: string | Function,
-    cb: any,
+    cb: any, // 变化后的回调
     options?: Object
   ): Function {
     const vm: Component = this

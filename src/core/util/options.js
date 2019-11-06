@@ -73,6 +73,7 @@ function mergeData (to: Object, from: ?Object): Object {
   return to
 }
 
+// 合并Data()
 /**
  * Data
  */
