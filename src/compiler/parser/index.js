@@ -74,6 +74,7 @@ export function createASTElement (
 }
 
 /**
+ * 将HTML字符串转换为AST抽象语法树
  * Convert HTML string to AST.
  */
 export function parse (

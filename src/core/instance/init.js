@@ -54,7 +54,7 @@ export function initMixin (Vue: Class<Component>) {
     initEvents(vm) // 初始化vm._events
     initRender(vm) // 初始化render相关，vm._vnode,vm._staticTrees,vm.$slots,vm.$scopedSlots,将$attrs，$listeners申明为响应式
     callHook(vm, 'beforeCreate')
-    initInjections(vm) // resolve injections before data/props
+    initInjections(vm) // resolve injections before data/props // 处理inject，允许一个祖先组件向其所有子孙后代注入一个依赖
     initState(vm)
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')

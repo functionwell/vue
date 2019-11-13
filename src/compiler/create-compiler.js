@@ -2,7 +2,7 @@
 
 import { extend } from 'shared/util'
 import { detectErrors } from './error-detector'
-import { createCompileToFunctionFn } from './to-function'
+import { createCompileToFunctionFn } from './to-function' // compileToFunctions函数
 
 export function createCompilerCreator (baseCompile: Function): Function {
   return function createCompiler (baseOptions: CompilerOptions) {

@@ -364,7 +364,7 @@ export function stateMixin (Vue: Class<Component>) {
     }
     options = options || {}
     options.user = true
-    const watcher = new Watcher(vm, expOrFn, cb, options)
+    const watcher = new Watcher(vm, expOrFn, cb, options) // 创建新的
     if (options.immediate) {
       try {
         cb.call(vm, watcher.value)
@@ -372,7 +372,7 @@ export function stateMixin (Vue: Class<Component>) {
         handleError(error, vm, `callback for immediate watcher "${watcher.expression}"`)
       }
     }
-    return function unwatchFn () {
+    return function unwatchFn () { // 返回watcher的取消监听方法
       watcher.teardown()
     }
   }

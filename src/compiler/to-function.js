@@ -18,6 +18,9 @@ function createFunction (code, errors) {
   }
 }
 
+/**
+ * compileToFunctions函数, 将template转换为function
+*/
 export function createCompileToFunctionFn (compile: Function): Function {
   const cache = Object.create(null)
 
@@ -57,7 +60,7 @@ export function createCompileToFunctionFn (compile: Function): Function {
     }
 
     // compile
-    const compiled = compile(template, options)
+    const compiled = compile(template, options) // ./create-compiler
 
     // check compilation errors/tips
     if (process.env.NODE_ENV !== 'production') {
